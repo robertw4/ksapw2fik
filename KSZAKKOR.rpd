@@ -1,0 +1,75 @@
+[SRC:Apteka]
+[DESC:zakupy-korekty]
+[RAPOK:1]
+[IDRPDF:0]
+[NAZWNAD:]
+[RODZJ:1]
+[MINBD:2.1.3.18185]
+[FUNWZ:NNTTTTNNTNNTTTNTTTTTNN]
+[NRGRP:1]
+korekty&*SQL&*&*&*&*/*
+SUMA=[VATNETTO,VATKWOTA,VATBRUTTO]
+SZEROKOSC=[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+KOLUMNA_LP=[0]
+ROZDZIAL_WIERSZY=[0]
+WYSOKOSC_NAGLOWKA=[1]
+WYROWNANIE_NAGLOWKA=[0]
+WYROWNANIE_TABELKI=[0]
+RAMKA=[1]
+WIZYTOWKA=[0]
+*/
+select
+'M2' as SYSTEM,
+'KZ' as TYP_DOK,
+symzr as NR_DOK,
+'przelew' as FORMA_PLAT,
+tabv.id-tabv0.iddok+1 as NR_POZ,
+0 as TRANSZA,
+5 as FLAGA,
+datau as DATA,
+'TOWAR' as STATUS,
+'zakup towarów' as OPERACJA,
+case when tabv0.iddok=tabv.id then tabv0.KWOTA else 0 end as KWOTA,
+' ' as SYNTETYKA,
+' ' as ANALITYKA,
+tabv.wrtnz as KWOTA_MA,
+' ' as SYN_MA,
+' ' as ANAL_MA,
+' ' as OPIS,
+' ' as SKAD,
+'FS' as MIEJSCE,
+'zakup' as INDEX1,
+'zakup towarów handlowych' as NAZWA,
+' ' as SWW,
+1 as ILOSC,
+' ' as JM,
+datau as VATDATAWYS,
+datau as VATDATASPR,
+datau as VATDATAZAK,
+datau as VATDATAWPL,
+tabv.wrtnz as VATNETTO,
+cast(round(tabv.stvat,0) as varchar(2)) as VATSTAWKA,
+tabv.wrtvz as VATKWOTA,
+tabv.wrtbt as VATBRUTTO,
+0 as VATZWOLNIO,
+0 as VATPOTBEZP,
+0 as VATPOSPELN,
+0 as VATNIEPOZW,
+'T' as VATKOREKTA,
+'K' as VATCEL,
+'H' as VATTOWAR,
+'V' as VATRODZAJ,
+dost.nazwa as KONTRAHENT,
+'Z' as KONTYP,
+(dost.ulica || ' ' || dost.nrdom || case when trim(dost.nrlok) = '' then '' else dost.nrlok end || dost.nrlok || ' '||  dost.kdpcz ||' '|| dost.miast) as KONADRES,
+' ' as KONTELEFON,
+dost.nrnip as KONNIPESEL,
+'N' as KIER_LICZ,
+' ' as KONTR_IDENT
+from dokf
+left join (select iddokf, min(id) as iddok, sum(wrtbt) as KWOTA from tabv group by iddokf) tabv0 on dokf.id = tabv0.iddokf
+left join tabv on dokf.id = tabv.iddokf
+left join dost on dokf.iddost = dost.id
+where (dokf.datau BETWEEN :DATAOD and :DATADO) and dokf.iddost >0 and tpkor=1;&*
+
+&*&*&*1&*
