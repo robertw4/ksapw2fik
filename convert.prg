@@ -34,11 +34,7 @@ while (!eof())
 	        loop
 	    endif
 	    fieldvalue = source->(&fieldname)
-		if (a_struct[i][DBS_TYPE] == 'D')
-		    destination->&fieldname := ctod(fieldvalue)
-		else
-		    destination->&fieldname := fieldvalue
-		endif
+        destination->&fieldname := fieldvalue
 	next
 	select source
 	skip
